@@ -29,4 +29,4 @@ See [contribution guide](CONTRIBUTING.md).
 
 ## Licence
 
-[MIT](LICENCE)
+[GPLv2](LICENCE)
