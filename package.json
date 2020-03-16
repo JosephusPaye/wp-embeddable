@@ -1,0 +1,15 @@
+{
+  "name": "wp-embeddable",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Josephus Paye II",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build",
+    "format": "prettier --write src/**/*.js"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^7.1.2",
+    "prettier": "^1.19.1"
+  }
+}
