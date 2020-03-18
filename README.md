@@ -1,14 +1,14 @@
-# WP Embeddables
+# WP Embeddable
 
 💠 Embed any content from your WordPress site into posts, pages, or other sites. WP_PLUGIN_DIR_LINK
 
-<!-- [![Promotional screenshot of WP Embeddables Plugin](./screenshot.png)](WP_PLUGIN_DIR_LINK) -->
+<!-- [![Promotional screenshot of WP Embeddable Plugin](./screenshot.png)](WP_PLUGIN_DIR_LINK) -->
 
 This project is part of [#CreateWeekly](https://dev.to/josephuspaye/createweekly-create-something-new-publicly-every-week-in-2020-1nh9), my attempt to create something new publicly every week in 2020.
 
 ## Features
 
-WP Embeddables is a WordPress plugin that allows you to embed any content from your WordPress site into posts, pages, or other sites.
+WP Embeddable is a WordPress plugin that allows you to embed any content from your WordPress site into posts, pages, or other sites.
 
 For example, you can use the plugin to create embeddables for contact forms on your site that can be embedded in other sites.
 

@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-add_action('init', 'wp_embeddables_register_post_type');
+add_action('init', 'wp_embeddable_register_post_type');
 
-function wp_embeddables_register_post_type() {
+function wp_embeddable_register_post_type() {
     // Register the Embeddable post type
     register_post_type('embeddable', [
         'description' => 'Embeddable content that can be embedded in posts, pages, or other sites.',
@@ -62,9 +62,9 @@ function wp_embeddables_register_post_type() {
 // Block editor assets
 // ================================================
 
-add_action( 'enqueue_block_editor_assets', 'wp_embeddables_enqueue_editor_assets' );
+add_action( 'enqueue_block_editor_assets', 'wp_embeddable_enqueue_editor_assets' );
 
-function wp_embeddables_enqueue_editor_assets() {
+function wp_embeddable_enqueue_editor_assets() {
     wp_enqueue_script( 'wp-embeddable-sidebar.js' );
 }
 
@@ -72,9 +72,9 @@ function wp_embeddables_enqueue_editor_assets() {
 // Embeddable renderer (with custom template)
 // ================================================
 
-add_filter('single_template', 'wp_embeddables_render_custom_template');
+add_filter('single_template', 'wp_embeddable_render_custom_template');
 
-function wp_embeddables_render_custom_template($single) {
+function wp_embeddable_render_custom_template($single) {
     global $post;
 
     if ( $post->post_type == 'embeddable' ) {
