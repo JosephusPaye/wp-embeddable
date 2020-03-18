@@ -1,5 +1,10 @@
 <?php
 
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
+
 add_action('init', 'wp_embeddables_register_post_type');
 
 function wp_embeddables_register_post_type() {

@@ -17,4 +17,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-require(plugin_dir_path(__FILE__) . 'php/setup.php');
+require(plugin_dir_path(__FILE__) . 'plugin/setup.php');
