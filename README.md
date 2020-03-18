@@ -16,13 +16,17 @@ For another example, you can create an embeddable with content from a plugin, li
 
 The plugin allows you to disable `wp_head()` and `wp_footer()` for an embeddable. This is useful for removing all WordPress and third-party scripts and styles from the page header and footer.
 
-## To-Do
+## What's next
 
 -   [x] Add shortcode: `[embeddable 121 autosize width="100%" height="200px"]`
 -   [ ] Show shortcode on embeddable edit screen for copy & paste
 -   [ ] Add Embeddable block
--   [ ] Add support for classic editor
 -   [ ] Publish to WP Plugins Directory
+
+### Extensions
+
+-   [ ] Add support for classic editor
+-   [ ] Figure out how to opt-out of Gutenberg automatically changing the width & height of every iframe to be responsive while keeping aspect ratio
 
 ## Contributing
 

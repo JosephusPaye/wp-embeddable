@@ -15,7 +15,24 @@ function resizeFrame(frame) {
         }
 
         frame.style.width = '100%';
+
+        frame.setAttribute('data-resized', true);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const frames = document.querySelectorAll(
+        'iframe[data-embeddable-autosize]'
+    );
+
+    [].forEach.call(frames, frame => {
+        if (
+            frame.hasAttribute('data-loaded') &&
+            !frame.hasAttribute('data-resized')
+        ) {
+            resizeFrame(frame);
+        }
+    });
+});
 
 window.wpEmbeddableResizeFrame = resizeFrame;

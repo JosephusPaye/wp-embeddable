@@ -48,17 +48,22 @@ function wp_embeddable_register_post_type() {
         'single' => true,
     ]);
 
-    // Register our script to add the sidebar panel in the block editor
-    $asset_file = include( plugin_dir_path( __DIR__ ) . 'build/index.asset.php');
+    // Register the script to add the sidebar panel in the block editor
+    $indexAsset = include( plugin_dir_path( __DIR__ ) . 'build/index.asset.php');
     wp_register_script(
         'wp-embeddable-sidebar.js',
         plugins_url( 'build/index.js', __DIR__ ),
-        $asset_file['dependencies'],
-        $asset_file['version']
+        $indexAsset['dependencies'],
+        $indexAsset['version']
     );
+
+    // Register the script to auto size an embeddable's iframe
+    $resizeFrameAsset = include( plugin_dir_path( __DIR__ ) . 'build/resize-frame.asset.php');
     wp_register_script(
         'wp-embeddable-resize-frame.js',
         plugins_url( 'build/resize-frame.js', __DIR__ ),
+        $resizeFrameAsset['dependencies'],
+        $resizeFrameAsset['version']
     );
 }
 
@@ -86,8 +91,8 @@ function wp_embeddable_shortcode( $attrs ) {
         return '';
     }
 
-    $width = array_key_exists('width', $attrs) ? $attrs['width'] : '100%';
-    $height = array_key_exists('height', $attrs) ? $attrs['height'] : '360';
+    $width = array_key_exists('width', $attrs) ? $attrs['width'] : '';
+    $height = array_key_exists('height', $attrs) ? $attrs['height'] : '';
     $autosize = in_array('autosize', $attrs, true) || (
         array_key_exists('autosize', $attrs) && filter_var($attrs['autosize'], FILTER_VALIDATE_BOOLEAN)
     );
@@ -95,10 +100,10 @@ function wp_embeddable_shortcode( $attrs ) {
     return wp_embeddable_generate_embed_code($post, $width, $height, $autosize);
 }
 
-function wp_embeddable_generate_embed_code($embeddablePost, $width = '100%', $height = '360', $autosize = false) {
+function wp_embeddable_generate_embed_code($embeddablePost, $width = '', $height = '', $autosize = false) {
     $permalink = get_post_permalink($embeddablePost);
 
-    $embedCode = "<iframe width=\"$width\" height=\"$height\" src=\"$permalink\" frameborder=\"0\" allowfullscreen " . ($autosize ? 'onload="wpEmbeddableResizeFrame(this)"' : '') . "></iframe>";
+    $embedCode = "<iframe width=\"$width\" height=\"$height\" src=\"$permalink\" frameborder=\"0\" allowfullscreen " . ($autosize ? 'data-embeddable-autosize onload="window.wpEmbeddableResizeFrame ? wpEmbeddableResizeFrame(this) : this.setAttribute(\'data-loaded\', true)"' : '') . "></iframe>";
 
     if ($autosize) {
         wp_enqueue_script( 'wp-embeddable-resize-frame.js' );
