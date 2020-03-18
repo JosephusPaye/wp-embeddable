@@ -18,7 +18,8 @@ The plugin allows you to disable `wp_head()` and `wp_footer()` for an embeddable
 
 ## To-Do
 
--   [ ] Add shortcode: `[embeddable my-embeddable-slug]` and `[embeddable 121]`
+-   [x] Add shortcode: `[embeddable 121 autosize width="100%" height="200px"]`
+-   [ ] Show shortcode on embeddable edit screen for copy & paste
 -   [ ] Add Embeddable block
 -   [ ] Add support for classic editor
 -   [ ] Publish to WP Plugins Directory
