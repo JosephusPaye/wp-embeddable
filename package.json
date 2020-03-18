@@ -4,8 +4,8 @@
   "private": true,
   "author": "Josephus Paye II",
   "scripts": {
-    "start": "wp-scripts start",
-    "build": "wp-scripts build",
+    "start": "wp-scripts start src/index.js src/resize-frame.js",
+    "build": "wp-scripts build src/index.js src/resize-frame.js",
     "format": "prettier --write src/**/*.js"
   },
   "devDependencies": {

@@ -56,6 +56,55 @@ function wp_embeddable_register_post_type() {
         $asset_file['dependencies'],
         $asset_file['version']
     );
+    wp_register_script(
+        'wp-embeddable-resize-frame.js',
+        plugins_url( 'build/resize-frame.js', __DIR__ ),
+    );
+}
+
+
+// ================================================
+// Shortcode
+// ================================================
+
+add_shortcode( 'embeddable', 'wp_embeddable_shortcode' );
+
+function wp_embeddable_shortcode( $attrs ) {
+    if (count($attrs) == 0) {
+        return '';
+    }
+
+    $id = intval($attrs[0]);
+
+    if ($id == 0) {
+        return '';
+    }
+
+    $post = get_post($id);
+
+    if ($post == null) {
+        return '';
+    }
+
+    $width = array_key_exists('width', $attrs) ? $attrs['width'] : '100%';
+    $height = array_key_exists('height', $attrs) ? $attrs['height'] : '360';
+    $autosize = in_array('autosize', $attrs, true) || (
+        array_key_exists('autosize', $attrs) && filter_var($attrs['autosize'], FILTER_VALIDATE_BOOLEAN)
+    );
+
+    return wp_embeddable_generate_embed_code($post, $width, $height, $autosize);
+}
+
+function wp_embeddable_generate_embed_code($embeddablePost, $width = '100%', $height = '360', $autosize = false) {
+    $permalink = get_post_permalink($embeddablePost);
+
+    $embedCode = "<iframe width=\"$width\" height=\"$height\" src=\"$permalink\" frameborder=\"0\" allowfullscreen " . ($autosize ? 'onload="wpEmbeddableResizeFrame(this)"' : '') . "></iframe>";
+
+    if ($autosize) {
+        wp_enqueue_script( 'wp-embeddable-resize-frame.js' );
+    }
+
+    return $embedCode;
 }
 
 // ================================================
