@@ -19,13 +19,15 @@ The plugin allows you to disable `wp_head()` and `wp_footer()` for an embeddable
 ## What's next
 
 -   [x] Add shortcode: `[embeddable 121 autosize width="100%" height="200px"]`
--   [ ] Show shortcode on embeddable edit screen for copy & paste
+-   [-] Show shortcode on embeddable edit screen for copy & paste
+    -   [x] Classic editor
+    -   [x] Block editor
 -   [ ] Add Embeddable block
 -   [ ] Publish to WP Plugins Directory
 
 ### Extensions
 
--   [ ] Add support for classic editor
+-   [x] Add support for classic editor
 -   [ ] Figure out how to opt-out of Gutenberg automatically changing the width & height of every iframe to be responsive while keeping aspect ratio
 
 ## Contributing
