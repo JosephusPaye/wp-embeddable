@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name:     WP Embeddable
  * Plugin URI:      https://github.com/JosephusPaye/wp-embeddable
@@ -13,8 +14,19 @@
  */
 
 /* Exit if accessed directly */
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
+if (!defined('ABSPATH')) {
+    return;
+}
+
+function wp_embeddable_log(...$values)
+{
+    foreach ($values as $value) {
+        if (is_array($value) || is_object($value)) {
+            error_log(print_r($value, true));
+        } else {
+            error_log($value);
+        }
+    }
 }
 
 require(plugin_dir_path(__FILE__) . 'plugin/setup.php');

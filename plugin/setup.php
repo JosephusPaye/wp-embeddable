@@ -1,14 +1,42 @@
 <?php
 
 /* Exit if accessed directly */
-if ( ! defined( 'ABSPATH' ) ) {
-	return;
+if (!defined('ABSPATH')) {
+    return;
 }
 
-add_action('init', function () {
-    // Register the Embeddable post type
-    register_post_type('embeddable', [
-        'description' => 'Embeddable content that can be embedded in posts, pages, or other sites.',
+$wpEmbeddablePostTypeKey = 'embeddable';
+
+$wpEmbeddableMetaFields = [
+    '_wp_embeddable_disable_wp_head' => [
+        'type' => 'boolean',
+        'label' => 'Disable wp_head()',
+        'help' => 'Disable scripts and styles from the page header',
+        'default' => '0',
+    ],
+    '_wp_embeddable_disable_wp_footer' => [
+        'type' => 'boolean',
+        'label' => 'Disable wp_footer()',
+        'help' => 'Disable scripts and styles from the page footer',
+        'default' => '0',
+    ],
+];
+
+$wpEmbeddableAssets = [
+    'wp-embeddable-sidebar.js' => [
+        'basename' => 'index',
+        'enqueue_for_editor' => true,
+    ],
+    'wp-embeddable-resize-frame.js' => [
+        'basename' => 'resize-frame',
+        'enqueue_for_editor' => false,
+    ],
+];
+
+add_action('init', function () use ($wpEmbeddablePostTypeKey, $wpEmbeddableMetaFields, $wpEmbeddableAssets) {
+    // Register the custom post type
+    register_post_type($wpEmbeddablePostTypeKey, [
+        'description' => 'Embeddable content for use in posts, pages, or other sites.',
         'public' => true,
         'exclude_from_search' => true,
         'has_archive' => false,
@@ -30,113 +58,67 @@ add_action('init', function () {
         ],
         'menu_icon' => 'dashicons-feedback',
         'menu_position' => 20, // Below 'Pages'
-        'supports' => ['title', 'editor', 'custom-fields', 'revisions'],
+        'supports' => ['title', 'editor'],
     ]);
 
-    // Register the custom meta fields for an Embeddable
-    register_post_meta('embeddable', '_wp_embeddable_disable_wp_head', [
-        'show_in_rest' => true,
-        'type' => 'boolean',
-        'single' => true,
-        'sanitize_callback' => 'rest_sanitize_boolean',
-        'auth_callback' => function() {
-            return current_user_can('edit_posts');
-        }
-    ]);
+    // Register the custom meta fields for an embeddable
+    foreach ($wpEmbeddableMetaFields as $fieldName => $fieldOptions) {
+        register_post_meta($wpEmbeddablePostTypeKey, $fieldName, [
+            'show_in_rest' => true,
+            'type' => $fieldOptions['type'],
+            'single' => true,
+            'sanitize_callback' => 'rest_sanitize_boolean',
+            'auth_callback' => function () {
+                return current_user_can('edit_posts');
+            }
+        ]);
+    }
 
-    register_post_meta('embeddable', '_wp_embeddable_disable_wp_footer', [
-        'show_in_rest' => true,
-        'type' => 'boolean',
-        'single' => true,
-        'sanitize_callback' => 'rest_sanitize_boolean',
-        'auth_callback' => function() {
-            return current_user_can('edit_posts');
-        }
-    ]);
-
-    // Register the script to add the sidebar panel in the block editor
-    $indexAsset = include( plugin_dir_path( __DIR__ ) . 'build/index.asset.php');
-    wp_register_script(
-        'wp-embeddable-sidebar.js',
-        plugins_url( 'build/index.js', __DIR__ ),
-        $indexAsset['dependencies'],
-        $indexAsset['version']
-    );
-
-    // Register the script to auto size an embeddable's iframe
-    $resizeFrameAsset = include( plugin_dir_path( __DIR__ ) . 'build/resize-frame.asset.php');
-    wp_register_script(
-        'wp-embeddable-resize-frame.js',
-        plugins_url( 'build/resize-frame.js', __DIR__ ),
-        $resizeFrameAsset['dependencies'],
-        $resizeFrameAsset['version']
-    );
+    // Register the frontend assets
+    foreach ($wpEmbeddableAssets as $assetKey => $assetOptions) {
+        $assetBasename = $assetOptions['basename'];
+        $meta = include(plugin_dir_path(__DIR__) . "build/$assetBasename.asset.php");
+        wp_register_script(
+            $assetKey,
+            plugins_url("build/$assetBasename.js", __DIR__),
+            $meta['dependencies'],
+            $meta['version']
+        );
+    }
 });
-
-
-// ================================================
-// Shortcode
-// ================================================
-
-add_shortcode( 'embeddable', function ( $attrs ) {
-    if (count($attrs) == 0) {
-        return '';
-    }
-
-    $id = intval($attrs[0]);
-
-    if ($id == 0) {
-        return '';
-    }
-
-    $post = get_post($id);
-
-    if ($post == null) {
-        return '';
-    }
-
-    $width = array_key_exists('width', $attrs) ? $attrs['width'] : '';
-    $height = array_key_exists('height', $attrs) ? $attrs['height'] : '';
-    $autosize = in_array('autosize', $attrs, true) || (
-        array_key_exists('autosize', $attrs) && filter_var($attrs['autosize'], FILTER_VALIDATE_BOOLEAN)
-    );
-
-    return wp_embeddable_generate_embed_code($post, $width, $height, $autosize);
-});
-
-function wp_embeddable_generate_embed_code($embeddablePost, $width = '', $height = '', $autosize = false) {
-    $permalink = get_post_permalink($embeddablePost);
-
-    $embedCode = "<iframe width=\"$width\" height=\"$height\" src=\"$permalink\" frameborder=\"0\" allowfullscreen " . ($autosize ? 'data-embeddable-autosize onload="window.wpEmbeddableResizeFrame ? wpEmbeddableResizeFrame(this) : this.setAttribute(\'data-loaded\', true)"' : '') . "></iframe>";
-
-    if ($autosize) {
-        wp_enqueue_script( 'wp-embeddable-resize-frame.js' );
-    }
-
-    return $embedCode;
-}
 
 // ================================================
 // Block editor assets
 // ================================================
 
-add_action( 'enqueue_block_editor_assets', function () {
-    wp_enqueue_script( 'wp-embeddable-sidebar.js' );
+add_action('enqueue_block_editor_assets', function () use ($wpEmbeddableAssets) {
+    foreach ($wpEmbeddableAssets as $assetKey => $assetOptions) {
+        if ($assetOptions['enqueue_for_editor']) {
+            wp_enqueue_script($assetKey);
+        }
+    }
 });
 
 // ================================================
 // Embeddable renderer (with custom template)
 // ================================================
 
-add_filter('single_template', function ($single) {
+add_filter('single_template', function ($single) use ($wpEmbeddablePostTypeKey) {
     global $post;
 
-    if ( $post->post_type == 'embeddable' ) {
+    if ($post->post_type == $wpEmbeddablePostTypeKey) {
         $renderPath = plugin_dir_path(__FILE__) . 'render.php';
-        if ( file_exists( $renderPath ) ) {
+        if (file_exists($renderPath)) {
             return $renderPath;
         }
     }
 
     return $single;
 });
+
+// ================================================
+// Shortcode and metaboxes
+// ================================================
+
+require(__DIR__ . '/shortcode.php');
+require(__DIR__ . '/classic-metabox.php');
