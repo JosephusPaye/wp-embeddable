@@ -5,9 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-add_action('init', 'wp_embeddable_register_post_type');
-
-function wp_embeddable_register_post_type() {
+add_action('init', function () {
     // Register the Embeddable post type
     register_post_type('embeddable', [
         'description' => 'Embeddable content that can be embedded in posts, pages, or other sites.',
@@ -36,16 +34,24 @@ function wp_embeddable_register_post_type() {
     ]);
 
     // Register the custom meta fields for an Embeddable
-    register_post_meta('embeddable', 'wp_embeddable_disable_wp_head', [
+    register_post_meta('embeddable', '_wp_embeddable_disable_wp_head', [
         'show_in_rest' => true,
         'type' => 'boolean',
         'single' => true,
+        'sanitize_callback' => 'rest_sanitize_boolean',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        }
     ]);
 
-    register_post_meta('embeddable', 'wp_embeddable_disable_wp_footer', [
+    register_post_meta('embeddable', '_wp_embeddable_disable_wp_footer', [
         'show_in_rest' => true,
         'type' => 'boolean',
         'single' => true,
+        'sanitize_callback' => 'rest_sanitize_boolean',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        }
     ]);
 
     // Register the script to add the sidebar panel in the block editor
@@ -65,16 +71,14 @@ function wp_embeddable_register_post_type() {
         $resizeFrameAsset['dependencies'],
         $resizeFrameAsset['version']
     );
-}
+});
 
 
 // ================================================
 // Shortcode
 // ================================================
 
-add_shortcode( 'embeddable', 'wp_embeddable_shortcode' );
-
-function wp_embeddable_shortcode( $attrs ) {
+add_shortcode( 'embeddable', function ( $attrs ) {
     if (count($attrs) == 0) {
         return '';
     }
@@ -98,7 +102,7 @@ function wp_embeddable_shortcode( $attrs ) {
     );
 
     return wp_embeddable_generate_embed_code($post, $width, $height, $autosize);
-}
+});
 
 function wp_embeddable_generate_embed_code($embeddablePost, $width = '', $height = '', $autosize = false) {
     $permalink = get_post_permalink($embeddablePost);
@@ -116,19 +120,15 @@ function wp_embeddable_generate_embed_code($embeddablePost, $width = '', $height
 // Block editor assets
 // ================================================
 
-add_action( 'enqueue_block_editor_assets', 'wp_embeddable_enqueue_editor_assets' );
-
-function wp_embeddable_enqueue_editor_assets() {
+add_action( 'enqueue_block_editor_assets', function () {
     wp_enqueue_script( 'wp-embeddable-sidebar.js' );
-}
+});
 
 // ================================================
 // Embeddable renderer (with custom template)
 // ================================================
 
-add_filter('single_template', 'wp_embeddable_render_custom_template');
-
-function wp_embeddable_render_custom_template($single) {
+add_filter('single_template', function ($single) {
     global $post;
 
     if ( $post->post_type == 'embeddable' ) {
@@ -139,4 +139,4 @@ function wp_embeddable_render_custom_template($single) {
     }
 
     return $single;
-}
+});

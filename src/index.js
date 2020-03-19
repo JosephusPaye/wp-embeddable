@@ -60,12 +60,12 @@ domReady(() => {
                     <DisableWpHeadField
                         label="Disable wp_head()"
                         help="Disable scripts and styles from the page header"
-                        metaFieldName="wp_embeddable_disable_wp_head"
+                        metaFieldName="_wp_embeddable_disable_wp_head"
                     />
                     <DisableWpFooterField
                         label="Disable wp_footer()"
                         help="Disable scripts and styles from the page footer"
-                        metaFieldName="wp_embeddable_disable_wp_footer"
+                        metaFieldName="_wp_embeddable_disable_wp_footer"
                     />
                 </PluginDocumentSettingPanel>
             );

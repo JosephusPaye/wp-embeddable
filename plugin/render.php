@@ -5,6 +5,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
+// Disable the Admin Bar
+show_admin_bar( false );
+add_filter( 'show_admin_bar', '__return_false' );
+remove_action( 'init', 'wp_admin_bar_init' );
+remove_action( 'wp_head', '_admin_bar_bump_cb' );
+
 // Disable unnecessary stuff from wp_head()
 remove_action( 'wp_head', 'feed_links_extra', 3 );
 remove_action( 'wp_head', 'feed_links', 2 );
@@ -16,11 +22,8 @@ remove_action( 'wp_head', 'start_post_rel_link', 10, 0 );
 remove_action( 'wp_head', 'adjacent_posts_rel_link', 10, 0 );
 remove_action( 'wp_head', 'wp_generator' );
 
-// Disable the Admin Bar
-add_filter('show_admin_bar', '__return_false');
-
-$disable_wp_head = boolval(get_post_meta(get_the_ID(), 'wp_embeddable_disable_wp_head', $single = true));
-$disable_wp_footer = boolval(get_post_meta(get_the_ID(), 'wp_embeddable_disable_wp_footer', $single = true));
+$disable_wp_head = boolval(get_post_meta(get_the_ID(), '_wp_embeddable_disable_wp_head', $single = true));
+$disable_wp_footer = boolval(get_post_meta(get_the_ID(), '_wp_embeddable_disable_wp_footer', $single = true));
 
 ?>
 <!DOCTYPE html>
