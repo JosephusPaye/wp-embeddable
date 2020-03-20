@@ -9,9 +9,11 @@ Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-WP Embeddable allows you to create embed codes for any content on your WordPress site, to embed into posts, pages, or other sites.
+Create embed codes for any content on your WordPress site, to embed into posts, pages, or other sites.
 
 == Description ==
+
+I don't offer support through the support forum. Use [GitHub](https://github.com/JosephusPaye/wp-embeddables/issues) instead.
 
 WP Embeddable allows you to create embed codes for any content on your WordPress site, to embed into posts, pages, or other sites.
 
