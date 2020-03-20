@@ -58,7 +58,7 @@ add_action('init', function () use ($wpEmbeddablePostTypeKey, $wpEmbeddableMetaF
         ],
         'menu_icon' => 'dashicons-feedback',
         'menu_position' => 20, // Below 'Pages'
-        'supports' => ['title', 'editor'],
+        'supports' => ['title', 'editor', 'custom-fields'],
     ]);
 
     // Register the custom meta fields for an embeddable

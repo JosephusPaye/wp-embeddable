@@ -1,4 +1,8 @@
-import { CheckboxControl } from '@wordpress/components';
+import {
+    CheckboxControl,
+    TextControl,
+    TextareaControl,
+} from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { select, withSelect, withDispatch } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -50,10 +54,10 @@ domReady(() => {
             withSelect(mapSelectToProps)
         )(CheckboxField);
 
-        const SidebarPanel = () => {
+        const EmbeddableOptionsPanel = () => {
             return (
                 <PluginDocumentSettingPanel
-                    name="wp-embeddable-sidebar"
+                    name="wp-embeddable-options-sidebar"
                     title="Embeddable Options"
                     icon={() => ''}
                 >
@@ -71,8 +75,56 @@ domReady(() => {
             );
         };
 
-        registerPlugin('wp-embeddable-sidebar', {
-            render: SidebarPanel,
+        registerPlugin('wp-embeddable-options-sidebar', {
+            render: EmbeddableOptionsPanel,
+        });
+
+        const ShortCodeField = compose(
+            withSelect(select => {
+                const id = select('core/editor').getEditedPostAttribute('id');
+                return {
+                    value: `[embeddable ${id} autosize]`,
+                };
+            })
+        )(TextControl);
+
+        const EmbedCodeField = compose(
+            withSelect(select => {
+                const link = select('core/editor').getEditedPostAttribute(
+                    'link'
+                );
+                return {
+                    value: makeEmbedCode(link),
+                };
+            })
+        )(TextareaControl);
+
+        const EmbeddableUsagePanel = () => {
+            return (
+                <PluginDocumentSettingPanel
+                    name="wp-embeddable-usage-sidebar"
+                    title="Embeddable Usage"
+                    icon={() => ''}
+                >
+                    <ShortCodeField label="Shortcode" readOnly />
+                    <EmbedCodeField label="Embed code" readOnly />
+                </PluginDocumentSettingPanel>
+            );
+        };
+
+        registerPlugin('wp-embeddable-usage-sidebar', {
+            render: EmbeddableUsagePanel,
         });
     }
 });
+
+function makeEmbedCode(permalink) {
+    return (
+        `<iframe src="${permalink}"` +
+        ' width="100%"' +
+        ' height="360px"' +
+        ' frameborder="0"' +
+        ' allowfullscreen' +
+        '></iframe>'
+    );
+}
