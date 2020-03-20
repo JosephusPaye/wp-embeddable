@@ -31,13 +31,14 @@ $wpEmbeddableOptionsMetaboxHtml = function ($post) use ($wpEmbeddableMetaFields,
 };
 
 $wpEmbeddableShortCodeMetaboxHtml = function ($post) {
-    $shortcode = '[embeddable ' .  $post->ID . ' autosize]';
+    $shortcodeAutosize = '[embeddable ' .  $post->ID . ' autosize]';
+    $shortcodeSized = '[embeddable ' .  $post->ID . ' width="100%" height="360px"]';
     ?>
     <p class="post-attributes-label-wrapper"><label class="post-attributes-label" for="wp_embeddable_shortcode">Shortcode</label></p>
-    <input class="widefat" id="wp_embeddable_shortcode" readonly type="text" value="<?php echo esc_attr($shortcode); ?>">
+    <input class="widefat" id="wp_embeddable_shortcode" readonly type="text" value="<?php echo esc_attr($shortcodeAutosize); ?>">
 
     <p class="post-attributes-label-wrapper"><label class="post-attributes-label" for="wp_embeddable_embed_code">Embed code</label></p>
-    <textarea class="widefat" rows="4" id="wp_embeddable_embed_code" readonly><?php echo esc_html(do_shortcode($shortcode)); ?></textarea>
+    <textarea class="widefat" rows="5" id="wp_embeddable_embed_code" readonly><?php echo esc_html(do_shortcode($shortcodeSized)); ?></textarea>
 <?php
 };
 
@@ -53,7 +54,9 @@ add_action('add_meta_boxes', function () use (
         $wpEmbeddableMetaBox['label'],
         $wpEmbeddableOptionsMetaboxHtml,
         $wpEmbeddablePostTypeKey,
-        $wpEmbeddableMetaBox['location']
+        $wpEmbeddableMetaBox['location'],
+        'default',
+        ['__back_compat_meta_box' => true]
     );
 
     add_meta_box(
@@ -61,7 +64,9 @@ add_action('add_meta_boxes', function () use (
         $wpEmbeddableShortCodeMetaBox['label'],
         $wpEmbeddableShortCodeMetaboxHtml,
         $wpEmbeddablePostTypeKey,
-        $wpEmbeddableShortCodeMetaBox['location']
+        $wpEmbeddableShortCodeMetaBox['location'],
+        'default',
+        ['__back_compat_meta_box' => true]
     );
 });
 

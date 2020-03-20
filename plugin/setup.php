@@ -121,4 +121,4 @@ add_filter('single_template', function ($single) use ($wpEmbeddablePostTypeKey) 
 // ================================================
 
 require(__DIR__ . '/shortcode.php');
-require(__DIR__ . '/classic-metabox.php');
+require(__DIR__ . '/metaboxes.php');
