@@ -91,7 +91,9 @@ add_action('save_post', function ($postId) use ($wpEmbeddablePostTypeKey, $wpEmb
         update_post_meta(
             $postId,
             $fieldName,
-            array_key_exists($fieldName, $_POST) ? $_POST[$fieldName] : $fieldOptions['default']
+            rest_sanitize_boolean(
+                array_key_exists($fieldName, $_POST) ? $_POST[$fieldName] : $fieldOptions['default']
+            )
         );
     }
 }, null, 1);
